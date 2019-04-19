@@ -48,7 +48,7 @@ int main() {
 
   struct bstree *tree = bstree_create(words[0], 0);
   struct listnode *hashtab[NUMBER_OF_WORDS];
-  double lookupTimer = 0, lookupTemp = 0;
+  double lookupTimer1 = 0, lookupTemp1 = 0, lookupTimer2 = 0, lookupTemp2 = 0;
   hashtab_init(hashtab);
 
   FILE *bstreeLookup = fopen("bstreeLookup.dat", "w");
@@ -57,31 +57,21 @@ int main() {
 
   for (i = 1; i <= NUMBER_OF_WORDS; ++i) {
     bstree_add(tree, words[i], i);
-    if (i % 300 == 0) {
-      char *searchKey = words[getrand(0, i)];
-      lookupTimer = wtime();
-      struct bstree *treeNode = bstree_lookup(tree, searchKey);
-      lookupTemp += wtime() - lookupTimer;
-    }
-    if (i % 6000 == 0) {
-      fprintf(bstreeLookup, "%d %f\n", i / 1000, lookupTemp * 50);
-      lookupTemp = 0;
-    }
-  }
-
-  lookupTemp = 0;
-
-  for (i = 1; i <= NUMBER_OF_WORDS; ++i) {
     hashtab_add(hashtab, words[i], i);
     if (i % 300 == 0) {
       char *searchKey = words[getrand(0, i)];
-      lookupTimer = wtime();
+      lookupTimer1 = wtime();
+      struct bstree *treeNode = bstree_lookup(tree, searchKey);
+      lookupTemp1 += wtime() - lookupTimer1;
+      lookupTimer2 = wtime();
       struct listnode *hashNode = hashtab_lookup(hashtab, searchKey);
-      lookupTemp += wtime() - lookupTimer;
+      lookupTemp2 += wtime() - lookupTimer2;
     }
     if (i % 6000 == 0) {
-      fprintf(hashtabLookup, "%d %f\n", i / 1000, lookupTemp * 50);
-      lookupTemp = 0;
+      fprintf(bstreeLookup, "%d %f\n", i / 1000, lookupTemp1 * 50);
+      lookupTemp1 = 0;
+      fprintf(hashtabLookup, "%d %f\n", i / 1000, lookupTemp2 * 50);
+      lookupTemp2 = 0;
     }
   }
 
